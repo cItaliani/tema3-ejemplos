@@ -1,0 +1,43 @@
+ [
+  {
+     "titulo": "El atlas de las nubes",
+ "año": 2012,
+ "directores": "Lana Wachowski, Lilly Wachowski",
+ "interpretes": [
+      {
+          "nombre": "Tom Hanks",
+          "fechaNacimiento": {
+           "año": 1956,
+           "mes": 8
+        }
+      },
+      {
+          "nombre": "Halle Berry",
+          "fechaNacimiento": {
+          "año": 1966,
+          "mes": 7
+        }
+      }
+    ]
+  },{
+    "titulo": "La red social",
+    "año": 2010,
+    "directores": "David Fincher",
+    "interpretes": [
+      {
+          "nombre": "Jesse Eisenberg",
+          "fechaNacimiento": {
+            "año": 1983,
+            "mes": 9
+        }
+      },
+      {
+          "nombre": "Andrew Garfield",
+          "fechaNacimiento": {
+           "año": 1983,
+           "mes": 7
+        }
+      }
+    ]
+  }
+]

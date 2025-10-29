@@ -1,0 +1,23 @@
+[
+    {
+        "titulo": "El atlas de las nubes",
+        "año": 2012,
+        "directores": "Lana Wachowski, Lilly Wachowski",
+        "intepretes": [
+            {
+                "nombre": "Tom Hanks",
+                "fechaNacimiento": {
+                    "año": "1956",
+                    "mes": 8
+                }
+            },
+            {
+                "nombre": "Halle Berry",
+                "fechaNacimiento": {
+                    "año": "1966",
+                    "mes": 7
+                }
+            }
+        ]
+    }
+]
