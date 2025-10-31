@@ -173,9 +173,42 @@ public class Ejercicio1 {
       nombre_evento= datos10.asJsonObject().getString("name");
       System.out.println("evento"+(i+1)+":"+nombre_evento);
     }
-  
-  
-  
-  
+// ejercicio11
+    System.out.println("\n ejercicio11");
+    informacion_detallada_lugar(ruta10);
+    informacion_detallada_evento(ruta10);
+
+  }
+
+  public static void informacion_detallada_lugar(String ruta) {
+    System.out.println("informacion detallada de lugares: ");
+    JsonObject datosdevueltos = api_externa(ruta).asJsonObject();
+    JsonObject primerobjeto = datosdevueltos.getJsonObject("_embedded");
+    JsonArray array_eventos = primerobjeto.getJsonArray("events");
+    for (int i = 0; i < array_eventos.size(); i++) {
+      JsonObject nuevo_embedded = array_eventos.getJsonObject(i).getJsonObject("_embedded");
+      JsonArray array_venues = nuevo_embedded.getJsonArray("venues");
+      for (int j = 0; j < array_venues.size(); j++) {
+        System.out.println("---inicio evento "+(i+1)+"---");
+        System.out.println("Nombre: "+array_venues.getJsonObject(j).getString("name"));
+        System.out.println("Ciudad: "+array_venues.getJsonObject(j).getJsonObject("city").getString("name"));
+        System.out.println("Pais: "+array_venues.getJsonObject(j).getJsonObject("country").getString("name"));
+        System.out.println("Direccion: "+array_venues.getJsonObject(j).getJsonObject("address").getString("line1"));
+        System.out.print("Localización: lat: "+array_venues.getJsonObject(j).getJsonObject("location").getString("longitude"));
+        System.out.println(" | long: "+array_venues.getJsonObject(j).getJsonObject("location").getString("latitude"));
+        System.out.println("---fin evento "+(i+1)+"---\n");
+      }
+    }
+
+  }
+
+  public static void informacion_detallada_evento(String ruta) {
+    //nombre fechga y hora 
+    Json Object datosdevueltos = api_externa(ruta).asJsonObject();
+    
+    
+
+
+
   }
 }
