@@ -6,6 +6,7 @@ import java.time.format.DateTimeFormatter;
 
 import javax.json.JsonArray;
 import javax.json.JsonObject;
+import javax.json.JsonString;
 import javax.json.JsonValue;
 
 public class Ejercicio1 {
@@ -203,11 +204,28 @@ public class Ejercicio1 {
   }
 
   public static void informacion_detallada_evento(String ruta) {
-    //nombre fechga y hora 
-    Json Object datosdevueltos = api_externa(ruta).asJsonObject();
-    
-    
-
+    //nombre fechga y hora
+    System.out.println("informacion detallada de eventos: ");
+    JsonObject datosdevueltos = api_externa(ruta).asJsonObject();
+    JsonObject primerObjeto = datosdevueltos.getJsonObject("_embedded");
+    JsonArray array_eventos= primerObjeto.getJsonArray("events");
+    for (int i = 0; i < array_eventos.size(); i++) {
+      JsonObject segundo_objeto= array_eventos.getJsonObject(i).getJsonObject("_embedded");
+      JsonArray segundo_array= segundo_objeto.getJsonArray("venues");
+      if (segundo_array!=null) {
+        System.out.println("entra segundo array");
+        for (int j = 0; j < segundo_array.size(); j++) {
+          JsonString nombre= segundo_array.getJsonObject(j).getJsonString("name");
+          JsonArray tercer_array= segundo_objeto.getJsonArray("dates");
+          for (int j2 = 0; j2 < tercer_array.size(); j2++) {
+            JsonString fecha= tercer_array.getJsonObject(i).getJsonString("localDate");
+            JsonString hora = tercer_array.getJsonObject(i).getJsonString("localTime");
+            System.out.println("el evento: "+nombre+" tendrá lugar el dia: "+fecha+"a las : "+hora+" horas");
+            
+          }
+        }
+      }
+    }
 
 
   }
