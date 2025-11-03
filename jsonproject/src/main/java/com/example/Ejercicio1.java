@@ -62,6 +62,69 @@ public class Ejercicio1 {
     return Instant.ofEpochSecond(unixTime).atZone(ZoneId.of("GMT+1")).format(formatter);
   }
 
+  // ejercicio 11
+  public static void informacion_detallada_lugar(String ruta) {
+    System.out.println("informacion detallada de lugares: ");
+    JsonObject datosdevueltos = api_externa(ruta).asJsonObject();
+    JsonObject primerobjeto = datosdevueltos.getJsonObject("_embedded");
+    JsonArray array_eventos = primerobjeto.getJsonArray("events");
+    for (int i = 0; i < array_eventos.size(); i++) {
+      JsonObject nuevo_embedded = array_eventos.getJsonObject(i).getJsonObject("_embedded");
+      JsonArray array_venues = nuevo_embedded.getJsonArray("venues");
+      for (int j = 0; j < array_venues.size(); j++) {
+        System.out.println("---inicio evento " + (i + 1) + "---");
+        System.out.println("Nombre: " + array_venues.getJsonObject(j).getString("name"));
+        System.out.println("Ciudad: " + array_venues.getJsonObject(j).getJsonObject("city").getString("name"));
+        System.out.println("Pais: " + array_venues.getJsonObject(j).getJsonObject("country").getString("name"));
+        System.out.println("Direccion: " + array_venues.getJsonObject(j).getJsonObject("address").getString("line1"));
+        System.out.print(
+            "Localización: lat: " + array_venues.getJsonObject(j).getJsonObject("location").getString("longitude"));
+        System.out.println(" | long: " + array_venues.getJsonObject(j).getJsonObject("location").getString("latitude"));
+        System.out.println("---fin evento " + (i + 1) + "---\n");
+      }
+    }
+
+  }
+
+  public static void informacion_detallada_lugar12(String ruta) {
+    System.out.println("\n ejercicio 12");
+    JsonObject datosdevueltos = api_externa(ruta).asJsonObject();
+    JsonObject primer_obj = datosdevueltos.getJsonObject("_embedded");
+    JsonArray primer_array = primer_obj.getJsonArray("events");
+    for (int i = 0; i < primer_array.size(); i++) {
+      JsonString nombre = primer_array.getJsonObject(i).getJsonString("name");
+      JsonObject segundo_obj = primer_array.getJsonObject(i).getJsonObject("_embedded");
+      JsonArray segundo_array = segundo_obj.getJsonArray("venues");
+      for (int j = 0; j < segundo_array.size(); j++) {
+        JsonObject ciudad = segundo_array.getJsonObject(j).getJsonObject("city");
+        String nombre_ciudad = ciudad.getJsonString("name").toString();
+        String nombre_ciudad_tratado = nombre_ciudad.replace("\"", "").replace(" ", "%20");
+        JsonValue prediccion = predicciones_meteorologicas1(nombre_ciudad_tratado);
+        JsonObject prediccion_obj = prediccion.asJsonObject();
+        String tiempo = prediccion_obj.getJsonArray("weather").getJsonObject(0).getString("description");
+        System.out.println(
+            "el evento: " + nombre + "en la ciudad de: " + nombre_ciudad_tratado + " tendrá un clima: " + tiempo);
+      }
+    }
+  }
+
+  public static void informacion_detallada_evento(String ruta) {
+    // nombre fecha y hora
+    System.out.println("informacion detallada de eventos: ");
+    JsonObject datosdevueltos = api_externa(ruta).asJsonObject();
+    JsonObject primerObjeto = datosdevueltos.getJsonObject("_embedded");
+    JsonArray array_eventos = primerObjeto.getJsonArray("events");
+    for (int i = 0; i < array_eventos.size(); i++) {
+      JsonString nombre = array_eventos.getJsonObject(i).getJsonString("name");
+      JsonObject segundo_objeto = array_eventos.getJsonObject(i).getJsonObject("dates");
+      JsonObject tercer_objeto = segundo_objeto.getJsonObject("start");
+      JsonString fecha = tercer_objeto.getJsonString("localDate");
+      JsonString hora = tercer_objeto.getJsonString("localTime");
+      System.out
+          .println("el evento: " + nombre + " | tendrá lugar el dia: " + fecha + " | a las : " + hora + " horas");
+    }
+  }
+
   public static void main(String[] args) {
 
     String ciudad = "vigo";
@@ -70,7 +133,7 @@ public class Ejercicio1 {
     String latitud = "42.2333";
     String longitud = "-8.7222";
 
-    // ejercicio 1
+    //ejercicio 1
     JsonValue datos1 = predicciones_meteorologicas1(ciudad);
     System.out.println("ejercicio 1");
     System.out.println(datos1);
@@ -94,13 +157,16 @@ public class Ejercicio1 {
     // ejercicio 5
     JsonValue datos5 = predicciones_meteorologicas2(latitud, longitud);
     System.out.println("ejercicio 5");
-    System.out.println("el nombre de la ciudad es: " + datos5.asJsonObject().getString("name"));
+    System.out.println("el nombre de la ciudad es: " +
+    datos5.asJsonObject().getString("name"));
 
     // ejercicio 6
     JsonValue datos6 = predicciones_meteorologicas1(ciudad);
 
-    double longitud6 = (datos6.asJsonObject().getJsonObject("coord").getJsonNumber("lon").doubleValue());
-    double latitud6 = (datos6.asJsonObject().getJsonObject("coord").getJsonNumber("lat").doubleValue());
+    double longitud6 =
+    (datos6.asJsonObject().getJsonObject("coord").getJsonNumber("lon").doubleValue());
+    double latitud6 =
+    (datos6.asJsonObject().getJsonObject("coord").getJsonNumber("lat").doubleValue());
     System.out.println("ejercicio 6");
     System.out.println("longitud: " + longitud6 + " | latitud: " + latitud6);
 
@@ -109,124 +175,93 @@ public class Ejercicio1 {
     String ciudad7 = datos_devueltos.asJsonObject().getString("name");
     long fecha = datos_devueltos.asJsonObject().getInt("dt");
     String date = unixTimeToString(fecha);
-    double temperatura = datos_devueltos.asJsonObject().getJsonObject("main").getJsonNumber("temp").doubleValue();
-    long humedad = datos_devueltos.asJsonObject().getJsonObject("main").getJsonNumber("humidity").longValue();
-    long nubes = datos_devueltos.asJsonObject().getJsonObject("clouds").getJsonNumber("all").longValue();
-    long velocidad_viento = datos_devueltos.asJsonObject().getJsonObject("wind").getJsonNumber("speed").longValue();
-    String pronostico = datos_devueltos.asJsonObject().getJsonArray("weather").getJsonObject(0)
-        .getString("description");
+    double temperatura =
+    datos_devueltos.asJsonObject().getJsonObject("main").getJsonNumber("temp").doubleValue();
+    long humedad =
+    datos_devueltos.asJsonObject().getJsonObject("main").getJsonNumber("humidity").longValue();
+    long nubes =
+    datos_devueltos.asJsonObject().getJsonObject("clouds").getJsonNumber("all").longValue();
+    long velocidad_viento =
+    datos_devueltos.asJsonObject().getJsonObject("wind").getJsonNumber("speed").longValue();
+    String pronostico =
+    datos_devueltos.asJsonObject().getJsonArray("weather").getJsonObject(0)
+    .getString("description");
     System.out.println("ejercicio 7");
     System.out
-        .print("ciudad: " + ciudad7 + " | fecha: " + date + " | temperatura: " + temperatura + " | humedad: " + humedad
-            + " | probabilidad de cielo con nubes: " + nubes + " | velocidad del viento: " + velocidad_viento
-            + " | pronostico del tiempo: " + pronostico + "\n");
+    .print("ciudad: " + ciudad7 + " | fecha: " + date + " | temperatura: " +
+    temperatura + " | humedad: " + humedad
+    + " | probabilidad de cielo con nubes: " + nubes + " | velocidad del viento:
+    " + velocidad_viento
+    + " | pronostico del tiempo: " + pronostico + "\n");
 
     // ejercicio 8
-    JsonObject datos_devueltos8 = predicciones_meteorologicas3(latitud, longitud, cantidad).asJsonObject();
+    JsonObject datos_devueltos8 = predicciones_meteorologicas3(latitud, longitud,
+    cantidad).asJsonObject();
     JsonArray lista = datos_devueltos8.getJsonArray("list");
     System.out.println("ejercicio 8");
     for (int i = 0; i < lista.size(); i++) {
-      JsonObject datos = lista.getJsonObject(i);
-      String ciudad8 = datos.asJsonObject().getString("name");
-      long fecha8 = datos.asJsonObject().getInt("dt");
-      String date8 = unixTimeToString(fecha8);
-      double temperatura8 = datos.asJsonObject().getJsonObject("main").getJsonNumber("temp").doubleValue();
-      int humedad8 = datos.asJsonObject().getJsonObject("main").getInt("humidity");
-      int nubes8 = datos.asJsonObject().getJsonObject("clouds").getInt("all");
-      int velocidad_viento8 = datos.asJsonObject().getJsonObject("wind").getInt("speed");
-      String pronostico8 = datos.asJsonObject().getJsonArray("weather").getJsonObject(0).getString("description");
+    JsonObject datos = lista.getJsonObject(i);
+    String ciudad8 = datos.asJsonObject().getString("name");
+    long fecha8 = datos.asJsonObject().getInt("dt");
+    String date8 = unixTimeToString(fecha8);
+    double temperatura8 =
+    datos.asJsonObject().getJsonObject("main").getJsonNumber("temp").doubleValue();
+    int humedad8 = datos.asJsonObject().getJsonObject("main").getInt("humidity");
+    int nubes8 = datos.asJsonObject().getJsonObject("clouds").getInt("all");
+    int velocidad_viento8 =
+    datos.asJsonObject().getJsonObject("wind").getInt("speed");
+    String pronostico8 =
+    datos.asJsonObject().getJsonArray("weather").getJsonObject(0).getString("description");
 
-      System.out.print(
-          "ciudad: " + ciudad8 + " | fecha: " + date8 + " | temperatura: " + temperatura8 + " | humedad: " + humedad8
-              + " | probabilidad de cielo con nubes: " + nubes8 + " | velocidad del viento: " + velocidad_viento8
-              + " | pronostico del tiempo: " + pronostico8 + "\n");
+    System.out.print(
+    "ciudad: " + ciudad8 + " | fecha: " + date8 + " | temperatura: " +
+    temperatura8 + " | humedad: " + humedad8
+    + " | probabilidad de cielo con nubes: " + nubes8 + " | velocidad del viento:
+    " + velocidad_viento8
+    + " | pronostico del tiempo: " + pronostico8 + "\n");
     }
 
     // ejercicio 9
-    String ruta = "https://opentdb.com/api.php?amount=20&category=12&difficulty=hard&type=multiple";
+    String ruta =
+    "https://opentdb.com/api.php?amount=20&category=12&difficulty=hard&type=multiple";
     JsonObject datos_devueltos9 = api_externa(ruta).asJsonObject();
     JsonArray lista9 = datos_devueltos9.getJsonArray("results");
     System.out.println("ejercicio 9");
     for (int i = 0; i < lista9.size(); i++) {
-      JsonObject datos = lista9.getJsonObject(i);
-      String pregunta = datos.asJsonObject().getString("question");
-      System.out.println("QUESTION " + (i + 1) + ": " + pregunta);
-      String respuesta_true = datos.asJsonObject().getString("correct_answer");
-      System.out.println("[*] correcta: "+respuesta_true);
-      JsonArray respuestas_false = datos.getJsonArray("incorrect_answers");
-      for (int j = 0; j < respuestas_false.size(); j++) {
-        String respuestaMala = respuestas_false.getString(j);
-        System.out.println("error " + (j + 1) + ": " + respuestaMala);
-      }
-      System.out.println();
+    JsonObject datos = lista9.getJsonObject(i);
+    String pregunta = datos.asJsonObject().getString("question");
+    System.out.println("QUESTION " + (i + 1) + ": " + pregunta);
+    String respuesta_true = datos.asJsonObject().getString("correct_answer");
+    System.out.println("[*] correcta: " + respuesta_true);
+    JsonArray respuestas_false = datos.getJsonArray("incorrect_answers");
+    for (int j = 0; j < respuestas_false.size(); j++) {
+    String respuestaMala = respuestas_false.getString(j);
+    System.out.println("error " + (j + 1) + ": " + respuestaMala);
+    }
+    System.out.println();
     }
 
-    // ejercicio 10
+    //ejercicio 10
     System.out.println("ejercicio 10");
-    String tipo_evento="sports";
+    String tipo_evento = "sports";
     String nombre_evento;
-    String ruta10 = "https://app.ticketmaster.com/discovery/v2/events.json?classificationName="+tipo_evento+"&countryCode=ES&apikey=AMXR5Rf8zlr7oGucsebGKvDCLOQmGUGE";
-    JsonObject datos_devueltos10= api_externa(ruta10).asJsonObject();
-    JsonObject principal= datos_devueltos10.getJsonObject("_embedded");
-    JsonArray lista10= principal.getJsonArray("events");
+    String ruta10 = "https://app.ticketmaster.com/discovery/v2/events.json?classificationName=" + tipo_evento
+        + "&countryCode=ES&apikey=AMXR5Rf8zlr7oGucsebGKvDCLOQmGUGE";
+    JsonObject datos_devueltos10 = api_externa(ruta10).asJsonObject();
+    JsonObject principal = datos_devueltos10.getJsonObject("_embedded");
+    JsonArray lista10 = principal.getJsonArray("events");
     for (int i = 0; i < lista10.size(); i++) {
-      JsonObject datos10=lista10.getJsonObject(i);
-      nombre_evento= datos10.asJsonObject().getString("name");
-      System.out.println("evento"+(i+1)+":"+nombre_evento);
+      JsonObject datos10 = lista10.getJsonObject(i);
+      nombre_evento = datos10.asJsonObject().getString("name");
+      System.out.println("evento" + (i + 1) + ":" + nombre_evento);
     }
-// ejercicio11
+    //ejercicio11
     System.out.println("\n ejercicio11");
     informacion_detallada_lugar(ruta10);
     informacion_detallada_evento(ruta10);
 
+   // ejercicio 12
+    informacion_detallada_lugar12(ruta10);
   }
 
-  public static void informacion_detallada_lugar(String ruta) {
-    System.out.println("informacion detallada de lugares: ");
-    JsonObject datosdevueltos = api_externa(ruta).asJsonObject();
-    JsonObject primerobjeto = datosdevueltos.getJsonObject("_embedded");
-    JsonArray array_eventos = primerobjeto.getJsonArray("events");
-    for (int i = 0; i < array_eventos.size(); i++) {
-      JsonObject nuevo_embedded = array_eventos.getJsonObject(i).getJsonObject("_embedded");
-      JsonArray array_venues = nuevo_embedded.getJsonArray("venues");
-      for (int j = 0; j < array_venues.size(); j++) {
-        System.out.println("---inicio evento "+(i+1)+"---");
-        System.out.println("Nombre: "+array_venues.getJsonObject(j).getString("name"));
-        System.out.println("Ciudad: "+array_venues.getJsonObject(j).getJsonObject("city").getString("name"));
-        System.out.println("Pais: "+array_venues.getJsonObject(j).getJsonObject("country").getString("name"));
-        System.out.println("Direccion: "+array_venues.getJsonObject(j).getJsonObject("address").getString("line1"));
-        System.out.print("Localización: lat: "+array_venues.getJsonObject(j).getJsonObject("location").getString("longitude"));
-        System.out.println(" | long: "+array_venues.getJsonObject(j).getJsonObject("location").getString("latitude"));
-        System.out.println("---fin evento "+(i+1)+"---\n");
-      }
-    }
-
-  }
-
-  public static void informacion_detallada_evento(String ruta) {
-    //nombre fechga y hora
-    System.out.println("informacion detallada de eventos: ");
-    JsonObject datosdevueltos = api_externa(ruta).asJsonObject();
-    JsonObject primerObjeto = datosdevueltos.getJsonObject("_embedded");
-    JsonArray array_eventos= primerObjeto.getJsonArray("events");
-    for (int i = 0; i < array_eventos.size(); i++) {
-      JsonObject segundo_objeto= array_eventos.getJsonObject(i).getJsonObject("_embedded");
-      JsonArray segundo_array= segundo_objeto.getJsonArray("venues");
-      if (segundo_array!=null) {
-        System.out.println("entra segundo array");
-        for (int j = 0; j < segundo_array.size(); j++) {
-          JsonString nombre= segundo_array.getJsonObject(j).getJsonString("name");
-          JsonArray tercer_array= segundo_objeto.getJsonArray("dates");
-          for (int j2 = 0; j2 < tercer_array.size(); j2++) {
-            JsonString fecha= tercer_array.getJsonObject(i).getJsonString("localDate");
-            JsonString hora = tercer_array.getJsonObject(i).getJsonString("localTime");
-            System.out.println("el evento: "+nombre+" tendrá lugar el dia: "+fecha+"a las : "+hora+" horas");
-            
-          }
-        }
-      }
-    }
-
-
-  }
 }
